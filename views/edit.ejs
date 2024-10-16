@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <form action="/edithabit/<%= habit.habit_id %>" method="POST">
+        <label for="habit_name">Habit Name:</label>
+        <input type="text" id="habit_name" name="habit_name" value="<%= habit.habit_name %>">
+      
+        <p>Select the days to follow this habit:</p>
+    
+        <div class="checkbox-button-wrapper">
+        <div class="checkbox-container">
+        <label><input type="checkbox" name="days_of_week" value="sunday" <%= habit.sunday ? 'checked' : '' %>> Sunday</label>
+        <label><input type="checkbox" name="days_of_week" value="monday" <%= habit.monday? 'checked' : '' %>> Monday</label>
+        <label><input type="checkbox" name="days_of_week" value="tuesday" <%= habit.tuesday ? 'checked' : '' %>> Tuesday</label>
+        <label><input type="checkbox" name="days_of_week" value="wednesday" <%= habit.wednesday ? 'checked' : '' %>> Wednesday</label>
+        <label><input type="checkbox" name="days_of_week" value="thursday" <%= habit.thursday ? 'checked' : '' %>> Thursday</label>
+        <label><input type="checkbox" name="days_of_week" value="friday" <%= habit.friday ? 'checked' : '' %>> Friday</label>
+        <label><input type="checkbox" name="days_of_week" value="saturday" <%= habit.saturday ? 'checked' : '' %>> Saturday</label>
+        
+        
+      </div>
+      
+      <div class="button-container">
+        <button type="submit">Edit Habit</button>
+      </div>
+    </div>
+    
+      </form>
+</body>
+</html>

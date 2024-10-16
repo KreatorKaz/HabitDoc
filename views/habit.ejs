@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <link rel="stylesheet" href="/habit.css">
+</head>
+<body>
+    <div class="header">
+        <h2 class="habit-name">Habit Name: <%= habit.habit_name %></h2>
+        <p class="date"><%= new Date().toLocaleString() %></p>
+    </div>
+
+    <div class="actions">
+        <form action="/upload/<%= habit.habit_id %>" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required />
+            <button type="submit">Upload Image</button>
+        </form>
+        
+        <form action="/capture/<%= habit.habit_id %>" method="post">
+            <button type="submit">Take Photo</button>
+        </form>
+        
+        <form action="/habit/<%= habit.habit_id %>/delete" method="POST">
+            <button type="submit">Delete Habit</button>
+        </form>
+
+        <form action="/edit/<%= habit.habit_id %>" method="post">
+            <button type="submit">Edit Habit</button>
+          </form>
+
+        <form action="/back" method="post">
+            <button type="submit">Back</button>
+        </form>
+    </div>
+
+    <h1>Gallery</h1>
+
+    <!-- Image Gallery Section -->
+    <div class="image-gallery">
+        <% if (images && images.length > 0) { %>
+            <% images.forEach(image => { %>
+                <div class="image-container">
+                    <img src="data:image/jpeg;base64,<%= image.data %>" alt="Documentation Image" />
+                    <p><%= image.timestamp %></p>
+                    <form action="/deleteImage/<%= image.id %>/habit/<%= habit.habit_id %>" method="POST">
+                        <button type="submit">Delete Image</button>
+                    </form>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No images available for this documentation.</p>
+        <% } %>
+    </div>    
+
+    <script>
+        // Camera access and capture logic
+    </script>
+</body>
+</html>

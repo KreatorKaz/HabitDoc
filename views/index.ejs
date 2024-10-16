@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/index.css">
+
+</head>
+<body>
+  <div class="header">
+    <h1>HabitDoc</h1>
+    <h2 class="align-right"><%= date %></h2>
+  </div>
+
+  <div class="object-row" >
+    <div class="object-column" id="sunday">
+      <h3 >Sunday</h3>
+      <div class="habit-list">
+        <% sundayHabits.forEach(function(habit) { %>
+          <div class="habit-card">
+            <a href="/habit/<%= habit.habit_id %>"><%= habit.habit_name %></a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="object-column" id="monday">
+      <h3 >Monday</h3>
+      <div class="habit-list">
+        <% mondayHabits.forEach(function(habit) { %>
+          <div class="habit-card">
+            <a href="/habit/<%= habit.habit_id %>"><%= habit.habit_name %></a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="object-column" id="tuesday">
+      <h3 >Tuesday</h3>
+      <div class="habit-list">
+        <% tuesdayHabits.forEach(function(habit) { %>
+          <div class="habit-card">
+            <a href="/habit/<%= habit.habit_id %>"><%= habit.habit_name %></a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="object-column" id="wednesday">
+      <h3 >Wednesday</h3>
+      <div class="habit-list">
+        <% wednesdayHabits.forEach(function(habit) { %>
+          <div class="habit-card">
+            <a href="/habit/<%= habit.habit_id %>"><%= habit.habit_name %></a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="object-column" id="thursday">
+      <h3 >Thursday</h3>
+      <div class="habit-list">
+        <% thursdayHabits.forEach(function(habit) { %>
+          <div class="habit-card">
+            <a href="/habit/<%= habit.habit_id %>"><%= habit.habit_name %></a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="object-column" id="friday">
+      <h3 >Friday</h3>
+      <div class="habit-list">
+        <% fridayHabits.forEach(function(habit) { %>
+          <div class="habit-card">
+            <a href="/habit/<%= habit.habit_id %>"><%= habit.habit_name %></a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="object-column" id="saturday">
+      <h3 >Saturday</h3>
+      <div class="habit-list">
+        <% saturdayHabits.forEach(function(habit) { %>
+          <div class="habit-card">
+            <a href="/habit/<%= habit.habit_id %>"><%= habit.habit_name %></a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+  
+  <form action="/add" method="post">
+    <button type="submit">Add Habit</button>
+  </form>
+  
+  <script>
+    const currentDay = new Date().getDay();
+
+// Array mapping days of the week to their corresponding IDs
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+// Add the highlight class to the current day
+  document.getElementById(days[currentDay]).classList.add('highlight');
+  </script>
+</body>
+</html>

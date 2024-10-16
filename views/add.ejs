@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <form action="/addhabit" method="POST">
+        <label for="habit_name">Habit Name:</label>
+        <input type="text" id="habit_name" name="habit_name" required>
+      
+        <p>Select the days to follow this habit:</p>
+    
+        <div class="checkbox-button-wrapper">
+        <div class="checkbox-container">
+        <label><input type="checkbox" name="days_of_week" value="sunday"> Sunday</label>
+        <label><input type="checkbox" name="days_of_week" value="monday"> Monday</label>
+        <label><input type="checkbox" name="days_of_week" value="tuesday"> Tuesday</label>
+        <label><input type="checkbox" name="days_of_week" value="wednesday"> Wednesday</label>
+        <label><input type="checkbox" name="days_of_week" value="thursday"> Thursday</label>
+        <label><input type="checkbox" name="days_of_week" value="friday"> Friday</label>
+        <label><input type="checkbox" name="days_of_week" value="saturday"> Saturday</label>
+        
+        
+      </div>
+      
+      <div class="button-container">
+        <button type="submit">Add Habit</button>
+      </div>
+    </div>
+    
+      </form>
+</body>
+</html>

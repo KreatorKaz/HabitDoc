@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Take a Picture using your Camera</h3>
+            <video id="video" width="640" height="480" autoplay></video>
+            <button id="capture">Capture</button>
+
+            <!-- Canvas to show captured image -->
+            <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+            <!-- Form to submit captured image -->
+            <form id="cameraUploadForm" action="/upload/<%= habit.habit_id %>" method="POST">
+                <input type="hidden" name="capturedImage" id="capturedImage" />
+                <button type="submit" style="display:none;" id="uploadImageBtn">Upload Captured Image</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Access the user's camera
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture');
+        const uploadBtn = document.getElementById('uploadImageBtn');
+        const capturedImageInput = document.getElementById('capturedImage');
+
+        // Prompt the user to allow camera access
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing camera: ", err);
+            });
+
+        // Capture the image from the video feed
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.style.display = 'block';
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas image to Base64 string
+            const imageData = canvas.toDataURL('image/jpeg');
+            capturedImageInput.value = imageData.split(',')[1]; // Strip the metadata
+            uploadBtn.style.display = 'block'; // Show the upload button
+        });
+    </script>    
+</body>
+</html>

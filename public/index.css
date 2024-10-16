@@ -1,0 +1,129 @@
+/* General page styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.align-right {
+    text-align: right;
+}
+
+/* Flexbox layout for days */
+.object-row {
+    display: flex;
+    justify-content: space-evenly; /* Distribute columns evenly */
+    flex-wrap: wrap; /* Allow wrapping if the screen is too narrow */
+    gap: 20px; /* Space between columns */
+}
+
+.object-column {
+    flex: 1 1 11%; /* Adjust the width so 7 columns fit in a row */
+    background-color: #f5f5f5;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* Styling for the habit cards (list) */
+.habit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Habit card styling */
+.habit-card {
+    background-color: #e0e0e0;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.habit-card:hover {
+    background-color: #d1d1d1; /* Slightly darker on hover */
+    transform: scale(1.05); /* Slightly grow on hover */
+}
+
+.habit-card a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.habit-card a:hover {
+    color: #007bff; /* Change text color on hover */
+}
+
+/* Form styles */
+form {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    margin-right: 10px;
+}
+
+form input[type="text"] {
+    margin-bottom: 20px;
+    padding: 8px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+form button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adds space between the checkboxes */
+}
+
+.button-container {
+    margin-left: auto; /* Pushes the button to the right */
+}
+
+.checkbox-button-wrapper {
+    display: flex;
+    justify-content: space-between; /* Space between checkboxes and button */
+    align-items: center; /* Align checkboxes and button vertically */
+    flex-wrap: wrap; /* Ensure wrapping on smaller screens */
+}
+
+/* Styling for the highlighted day */
+.highlight {
+    background-color: #bfdcfb; /* Yellow highlight */
+    color: black;
+    font-weight: bold;
+}
