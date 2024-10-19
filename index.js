@@ -29,10 +29,26 @@ import bodyParser from "body-parser";
 import pg from "pg";
 import multer from "multer";
 import env from "dotenv";
+import session from 'express-session';
+import bcrypt from 'bcrypt';
 
 const app = express();
 const port = 3000;
+const salt = 10;
+const storage = multer.memoryStorage(); // Store file in memory
+const upload = multer({ storage: storage });
+
 env.config();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,    // Used to sign/encrypt the session ID cookie
+    resave: false,                // Prevents saving unchanged sessions
+    saveUninitialized: true,      // Creates a session even if it's empty initially
+    cookie: { secure: false }     // Send cookie over HTTP in development; set secure: true for HTTPS in production
+  }));
+
 
 const db = new pg.Client({
     user: process.env.PG_USER,
@@ -43,12 +59,6 @@ const db = new pg.Client({
 })
 
 db.connect();
-
-const storage = multer.memoryStorage(); // Store file in memory
-const upload = multer({ storage: storage });
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-
 
 function todayDate(){
     const today = new Date();
@@ -67,7 +77,6 @@ function todayDateTime() {
     
     return `${formattedDate} at ${formattedTime}`;
 }
-
 
 function dayOfTheWeek(){
     const today = new Date();
@@ -90,15 +99,70 @@ function formatDate(dateString) {
     return `${formattedDate}, ${formattedTime}`;
 }
 
-app.get("/", async (req,res) => {
-    const dayColumn = dayOfTheWeek()
-    const sundayHabits = await db.query(`SELECT * FROM habits WHERE sunday = TRUE`);
-    const mondayHabits = await db.query(`SELECT * FROM habits WHERE monday = TRUE`);
-    const tuesdayHabits = await db.query(`SELECT * FROM habits WHERE tuesday = TRUE`);
-    const wednesdayHabits = await db.query(`SELECT * FROM habits WHERE wednesday = TRUE`);
-    const thursdayHabits = await db.query(`SELECT * FROM habits WHERE thursday = TRUE`);
-    const fridayHabits = await db.query(`SELECT * FROM habits WHERE friday = TRUE`);
-    const saturdayHabits = await db.query(`SELECT * FROM habits WHERE saturday = TRUE`);
+function checkAuthenticaton (req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        res.render('register.ejs')
+    }
+}
+
+
+
+app.post("/register", async (req,res) => {
+    const username = req.body.username
+    const email = req.body.email
+    
+    const password = req.body.password
+    const hashPassword = await bcrypt.hash(password, salt)
+    
+    try {    
+        await db.query(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`, [username, email, hashPassword])
+        
+        const result = await db.query('SELECT * FROM users WHERE username = $1 OR email = $1', [username])
+        const user = result.rows[0]
+        req.session.user = {
+            id: user.id
+        }
+
+        res.redirect("/")
+
+    } catch (err) {
+        res.send('User already exists, try again.')
+    }
+    
+})
+
+app.post('/login', async (req,res) => {
+    const username = req.body.username
+    const password = req.body.password
+
+    try {
+        const result = await db.query('SELECT * FROM users WHERE username = $1 OR email = $1', [username])
+        const user = result.rows[0]
+        const comparePassword = await bcrypt.compare(password, user.password)
+        if (comparePassword) {
+            req.session.user = {
+                id: user.id
+            }
+            res.redirect("/")
+        } else {
+            res.send('Incorrect password. Try again')
+        }
+    } catch (err) {
+        res.send('user does not exist. Try again or register.') 
+    }
+})
+
+app.get("/", checkAuthenticaton, async (req,res) => {
+    const user = req.session.user.id
+    const sundayHabits = await db.query(`SELECT * FROM habits WHERE sunday = TRUE AND user_id = $1`, [user]);
+    const mondayHabits = await db.query(`SELECT * FROM habits WHERE monday = TRUE AND user_id = $1`, [user]);
+    const tuesdayHabits = await db.query(`SELECT * FROM habits WHERE tuesday = TRUE AND user_id = $1`, [user]);
+    const wednesdayHabits = await db.query(`SELECT * FROM habits WHERE wednesday = TRUE AND user_id = $1`, [user]);
+    const thursdayHabits = await db.query(`SELECT * FROM habits WHERE thursday = TRUE AND user_id = $1`, [user]);
+    const fridayHabits = await db.query(`SELECT * FROM habits WHERE friday = TRUE AND user_id = $1`, [user]);
+    const saturdayHabits = await db.query(`SELECT * FROM habits WHERE saturday = TRUE AND user_id = $1`, [user]);
 
 
     const currentDay = todayDate();
@@ -118,7 +182,8 @@ app.get("/habit/:id", async (req,res) => {
     const habitId = req.params.id;
     const habitResult = await db.query('SELECT * FROM habits WHERE habit_id = $1', [habitId])
     const imageData = await db.query('select * from documentation where habit_id = $1', [habitId])
-    res.render("habit.ejs",{habit: habitResult.rows[0], images: imageData.rows.map(row => ({
+    const date = todayDate()
+    res.render("habit.ejs",{habit: habitResult.rows[0], date: date, images: imageData.rows.map(row => ({
         id: row.img_id, 
         data: row.image_data,
         timestamp: formatDate(row.timestamp)
@@ -126,11 +191,12 @@ app.get("/habit/:id", async (req,res) => {
 })
 
 app.post("/addhabit", async (req,res) =>{
+    const user = req.session.user.id
     const newHabit = req.body.habit_name;
     let selectedDays = req.body.days_of_week; // This will be an array of selected days
 
     try {
-        await db.query('INSERT INTO habits (habit_name) VALUES ($1)', [newHabit])
+        await db.query('INSERT INTO habits (habit_name, user_id) VALUES ($1, $2)', [newHabit, user])
         if (!Array.isArray(selectedDays)) {
             selectedDays = [selectedDays]; // Wrap the single string in an array
         }
@@ -138,7 +204,7 @@ app.post("/addhabit", async (req,res) =>{
         if (selectedDays && Array.isArray(selectedDays)) {
             for (const day of selectedDays) {
                 // Update the corresponding day column to TRUE for the new habit
-                await db.query(`UPDATE habits SET ${day} = TRUE WHERE habit_name = $1`, [newHabit]);
+                await db.query(`UPDATE habits SET ${day} = TRUE WHERE habit_name = $1 AND user_id = $2`, [newHabit, user]);
             }
         }
     
@@ -258,6 +324,11 @@ app.post('/back', (req,res) => {
 app.post('/add', (req,res) => {
     res.render("add.ejs")
 })
+
+app.post('/logout', (req,res) => {
+    req.session.destroy()
+    res.redirect('/')
+}) 
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
