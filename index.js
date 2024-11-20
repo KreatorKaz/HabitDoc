@@ -62,6 +62,8 @@ const db = new pg.Client({
     ssl: process.env.PG_SSL === 'true' ? { rejectUnauthorized: false } : false,
 })
 
+console.log('PG_SSL:', process.env.PG_SSL);
+
 db.connect();
 
 function todayDate(){
