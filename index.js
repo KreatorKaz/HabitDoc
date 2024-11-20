@@ -43,10 +43,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,    // Used to sign/encrypt the session ID cookie
-    resave: false,                // Prevents saving unchanged sessions
-    saveUninitialized: true,      // Creates a session even if it's empty initially
-    cookie: { secure: false }     // Send cookie over HTTP in development; set secure: true for HTTPS in production
+    secret: process.env.SESSION_SECRET,    // Secret for signing the cookie
+    keys: [process.env.SESSION_KEY || 'your-secret-key'],  // Signing keys for the session cookies
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // Set secure to true in production
+      maxAge: 24 * 60 * 60 * 1000 // Optional: Set cookie expiration (1 day)
+    }
   }));
 
 const db = new pg.Client({
