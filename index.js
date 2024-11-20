@@ -54,12 +54,10 @@ app.use(session({
   }));
 
 const db = new pg.Client({
-    user: process.env.PG_USER,
-    host: process.env.PG_HOST,
-    database: process.env.PG_DATABASE,
-    password: process.env.PG_PASSWORD,
-    port: process.env.PG_PORT,
-    ssl: process.env.PG_SSL === 'true' ? { rejectUnauthorized: false } : false,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false, // Necessary for Render
+    },
 })
 
 console.log('PG_SSL:', process.env.PG_SSL);
