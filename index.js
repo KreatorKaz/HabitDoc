@@ -33,7 +33,7 @@ import session from 'express-session';
 import bcrypt from 'bcrypt';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const salt = 10;
 const storage = multer.memoryStorage(); // Store file in memory
 const upload = multer({ storage: storage });
