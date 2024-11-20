@@ -49,7 +49,6 @@ app.use(session({
     cookie: { secure: false }     // Send cookie over HTTP in development; set secure: true for HTTPS in production
   }));
 
-
 const db = new pg.Client({
     user: process.env.PG_USER,
     host: process.env.PG_HOST,
@@ -106,8 +105,6 @@ function checkAuthenticaton (req, res, next) {
         res.render('register.ejs')
     }
 }
-
-
 
 app.post("/register", async (req,res) => {
     const username = req.body.username
