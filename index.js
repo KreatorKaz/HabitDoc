@@ -29,7 +29,7 @@ import bodyParser from "body-parser";
 import pg from "pg";
 import multer from "multer";
 import env from "dotenv";
-import session from 'express-session';
+import session from 'cookie-session';
 import bcrypt from 'bcrypt';
 
 const app = express();
