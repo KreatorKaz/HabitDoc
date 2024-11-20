@@ -29,7 +29,7 @@ import bodyParser from "body-parser";
 import pg from "pg";
 import multer from "multer";
 import env from "dotenv";
-import session from 'cookie-session';
+import session from 'express-session';
 import bcrypt from 'bcrypt';
 
 const app = express();
@@ -43,15 +43,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,    // Secret for signing the cookie
-    keys: [process.env.SESSION_KEY || 'your-secret-key'],  // Signing keys for the session cookies
-    resave: false,
-    saveUninitialized: true,
+    secret: 'your-secret-key', // A random string to sign the session ID
+    resave: false,             // Prevents resaving session data if it hasn’t changed
+    saveUninitialized: false,  // Prevents saving uninitialized sessions
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Set secure to true in production
-      maxAge: 24 * 60 * 60 * 1000 // Optional: Set cookie expiration (1 day)
+        maxAge: 60000 // Sets the session cookie lifetime (in milliseconds)
     }
-  }));
+}));
 
 const db = new pg.Client({
     user: process.env.PG_USER,
